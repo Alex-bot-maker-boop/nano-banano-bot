@@ -9,7 +9,7 @@ def init_db():
     cursor = conn.cursor()
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY,
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER UNIQUE,
             username TEXT,
             free_uses INTEGER DEFAULT 3,
@@ -32,7 +32,6 @@ def add_user(user_id, username):
         ''', (user_id, username))
         conn.commit()
         conn.close()
-        logger.info(f"✅ Добавлен пользователь: {username} ({user_id})")
     except Exception as e:
         logger.error(f"❌ Ошибка добавления пользователя: {e}")
 
@@ -61,6 +60,5 @@ def update_balance(user_id, free_uses=0, paid_uses=0):
         ''', (free_uses, paid_uses, user_id))
         conn.commit()
         conn.close()
-        logger.info(f"✅ Обновлён баланс пользователя {user_id}")
     except Exception as e:
         logger.error(f"❌ Ошибка обновления баланса: {e}")
