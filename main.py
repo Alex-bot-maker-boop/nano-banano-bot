@@ -24,7 +24,7 @@ def run_health_server():
     app = web.Application()
     app.router.add_get('/health', handle_health)
     app.router.add_get('/', handle_health)
-    web.run_app(app, port=8080, host='0.0.0.0')
+    web.run_app(app, port=10000, host='0.0.0.0')  # Render стандартный порт
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -184,7 +184,7 @@ async def main():
     # Запускаем HTTP-сервер для health check
     health_thread = threading.Thread(target=run_health_server, daemon=True)
     health_thread.start()
-    logger.info("🌐 HTTP health server started on port 8080")
+    logger.info("🌐 HTTP health server started on port 10000")
     
     # Запуск бота
     await dp.start_polling(bot)
