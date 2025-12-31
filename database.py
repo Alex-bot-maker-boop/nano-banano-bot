@@ -4,7 +4,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 def init_db():
-    """Инициализация базы данных"""
     conn = sqlite3.connect('users.db')
     cursor = conn.cursor()
     cursor.execute('''
@@ -22,7 +21,6 @@ def init_db():
     logger.info("✅ База данных инициализирована")
 
 def add_user(user_id, username):
-    """Добавление нового пользователя"""
     try:
         conn = sqlite3.connect('users.db')
         cursor = conn.cursor()
@@ -36,7 +34,6 @@ def add_user(user_id, username):
         logger.error(f"❌ Ошибка добавления пользователя: {e}")
 
 def get_user(user_id):
-    """Получение данных пользователя"""
     try:
         conn = sqlite3.connect('users.db')
         cursor = conn.cursor()
@@ -49,7 +46,6 @@ def get_user(user_id):
         return None
 
 def update_balance(user_id, free_uses=0, paid_uses=0):
-    """Обновление баланса пользователя"""
     try:
         conn = sqlite3.connect('users.db')
         cursor = conn.cursor()
