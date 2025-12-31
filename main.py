@@ -161,24 +161,26 @@ async def main():
     # Инициализация БД
     init_db()
     
+       logger.info("="*60)
+    logger.info("  ЗАПУСК БОТА NANO-BANANO v2.0")
     logger.info("="*60)
-    logger.info("✅ ЗАПУСК БОТА NANO-BANANO v2.0")
-    logger.info("="*60)
-    logger.info(f"✅ Бот: @NanoBananoGeneratorBot")
-    logger.info(f"✅ ID бота: {await bot.get_me().id}")
-    logger.info(f"✅ Имя бота: {await bot.get_me().full_name}")
-    logger.info(f"✅ Админ ID: {ADMIN_ID}")
-    logger.info(f"✅ База данных: users.db")
-    
+    logger.info(f"  Бот: @NanoBananoGeneratorBot")
+
+    bot_info = await bot.get_me()
+    logger.info(f"  ID бота: {bot_info.id}")
+    logger.info(f"  Имя бота: {bot_info.full_name}")
+    logger.info(f"  Админ ID: {ADMIN_ID}")
+    logger.info(f"  База данных: users.db")
+
     if REPLICATE_API_TOKEN and REPLICATE_API_TOKEN != "ваш_токен":
-        logger.info("✅ Режим: РЕАЛЬНАЯ генерация через Replicate API")
+        logger.info("  Режим: РЕАЛЬНАЯ генерация через Replicate API")
     else:
-        logger.info("⚠️ Режим: ДЕМО (без реальной генерации)")
-    
-    logger.info("✅ Все системы готовы")
+        logger.info("  Режим: ДЕМО (без реальной генерации)")
+
+    logger.info("  Все системы готовы")
     logger.info("="*60)
-    logger.info("✅ Откройте Telegram и найдите своего бота")
-    logger.info("✅ Используйте команду /start")
+    logger.info("  Откройте Telegram и найдите своего бота")
+    logger.info("  Используйте команду /start")
     logger.info("="*60)
     
     # Запускаем HTTP-сервер для health check
