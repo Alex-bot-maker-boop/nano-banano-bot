@@ -1,22 +1,18 @@
-import random
 import aiohttp
-from io import BytesIO
 import replicate
 from config import REPLICATE_API_TOKEN
 
 async def generate_image_with_replicate(prompt: str, style: str = "классика", input_image_url: str = None) -> str:
-    """
-    Генерирует изображение через Replicate API.
-    """
+    """Генерация через Replicate API"""
     if not REPLICATE_API_TOKEN:
         return None
     
     try:
-        full_prompt = f"{prompt}, {style}, high quality"
+        full_prompt = f"{prompt}, {style}, high quality, digital art"
         
         input_params = {
             "prompt": full_prompt,
-            "negative_prompt": "ugly, blurry, bad quality",
+            "negative_prompt": "ugly, blurry, bad quality, artifacts",
             "width": 768,
             "height": 1024,
             "num_outputs": 1
@@ -34,12 +30,9 @@ async def generate_image_with_replicate(prompt: str, style: str = "класси�
             return output[0]
         return None
         
-    except Exception as e:
-        print(f"Replicate error: {e}")
+    except Exception:
         return None
 
 async def generate_demo_image() -> str:
-    """
-    Демо-изображение (запасной вариант).
-    """
+    """Демо-изображение"""
     return "https://i.imgur.com/demo_image.jpg"
