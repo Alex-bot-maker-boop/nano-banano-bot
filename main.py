@@ -1,12 +1,9 @@
 import logging
 import sys
-import threading
 import asyncio
-from aiohttp import web
 
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters import Command
-from aiogram.types import Message, InputFile, FSInputFile  # ← ДОБАВЛЕНО
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.storage.memory import MemoryStorage
@@ -14,18 +11,6 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from config import BOT_TOKEN, ADMIN_ID, REPLICATE_API_TOKEN
 from database import init_db, add_user, get_user, update_balance
 from ai_generator import generate_image_with_replicate, generate_demo_image
-
-# ==================== HTTP SERVER FOR RENDER HEALTH CHECK ====================
-async def handle_health(request):
-    """Health check endpoint для Render"""
-    return web.Response(text="OK")
-
-def run_health_server():
-    """Запуск HTTP-сервера в отдельном потоке"""
-    app = web.Application()
-    app.router.add_get('/health', handle_health)
-    app.router.add_get('/', handle_health)
-    web.run_app(app, port=10000, host='0.0.0.0')
 
 # ==================== LOGGING SETUP ====================
 logging.basicConfig(
@@ -52,7 +37,7 @@ class UserState(StatesGroup):
 
 # ==================== COMMAND HANDLERS ====================
 @dp.message(Command("start"))
-async def cmd_start(message: Message):
+async def cmd_start(message: types.Message):
     """Обработчик команды /start"""
     user_id = message.from_user.id
     user_name = message.from_user.full_name or "Пользователь"
@@ -64,8 +49,9 @@ async def cmd_start(message: Message):
         f"👋 Привет, {user_name}!\n\n"
         f"Я бот для генерации изображений в стиле советских открыток.\n"
         f"Отправь мне фото и описание — и я создам новогоднюю открытку!\n\n"
-        f"📸 Сначала отправь фото (можно селфи или портрет)\n"
-        f"✏️ Затем напиши описание (например: 'Сделай новогоднюю открытку')\n\n"
+        f"📸 1. Сначала отправь фото (селфи или портрет)\n"
+        f"✏️ 2. Затем напиши описание\n"
+        f"🖼️ 3. Получи готовое изображение!\n\n"
         f"🎁 Бесплатных генераций: 3\n"
         f"💎 Платных генераций: 0"
     )
@@ -74,7 +60,7 @@ async def cmd_start(message: Message):
     await message.answer("📸 Отправьте фото для обработки:")
 
 @dp.message(lambda message: message.photo)
-async def handle_photo(message: Message, state: FSMContext):
+async def handle_photo(message: types.Message, state: FSMContext):
     """Обработчик загрузки фото"""
     user_id = message.from_user.id
     
@@ -86,7 +72,7 @@ async def handle_photo(message: Message, state: FSMContext):
     await state.set_state(UserState.waiting_for_prompt)
 
 @dp.message(UserState.waiting_for_prompt)
-async def handle_prompt(message: Message, state: FSMContext):
+async def handle_prompt(message: types.Message, state: FSMContext):
     """Обработчик текстового описания"""
     user_id = message.from_user.id
     prompt = message.text
@@ -192,14 +178,6 @@ async def main():
     logger.info("✅ Откройте Telegram и найдите своего бота")
     logger.info("✅ Используйте команду /start")
     logger.info("="*60)
-    
-    # Запускаем HTTP-сервер для health check
-    try:
-        health_thread = threading.Thread(target=run_health_server, daemon=True)
-        health_thread.start()
-        logger.info("🌐 HTTP health server started on port 10000")
-    except Exception as e:
-        logger.warning(f"⚠️ Не удалось запустить HTTP-сервер: {e}")
     
     # Запуск бота
     try:
